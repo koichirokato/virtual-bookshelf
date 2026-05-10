@@ -25,6 +25,10 @@ class VirtualBookshelf {
         this.sortOrder = 'custom';
         this.sortDirection = 'desc';
 
+        // TECHSHELFフィルタ
+        this.activeLevelFilter = 'all';
+        this.activeLangFilter = null;
+
         // シリーズグループ化関連
         this.seriesManager = null;
         this.seriesGroups = [];
@@ -422,6 +426,31 @@ class VirtualBookshelf {
             cancelStaticShareBtn.addEventListener('click', () => this.closeStaticShareModal());
         }
 
+        // TECHSHELFレベルフィルタ
+        document.querySelectorAll('[data-filter="level"]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('[data-filter="level"]').forEach(b => b.classList.remove('active-level'));
+                btn.classList.add('active-level');
+                this.activeLevelFilter = btn.dataset.value;
+                this.applyFilters();
+            });
+        });
+
+        // TECHSHELF言語フィルタ（トグル）
+        document.querySelectorAll('[data-filter="lang"]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (this.activeLangFilter === btn.dataset.value) {
+                    btn.classList.remove('active-lang');
+                    this.activeLangFilter = null;
+                } else {
+                    document.querySelectorAll('[data-filter="lang"]').forEach(b => b.classList.remove('active-lang'));
+                    btn.classList.add('active-lang');
+                    this.activeLangFilter = btn.dataset.value;
+                }
+                this.applyFilters();
+            });
+        });
+
         // Event delegation for modal content
         document.addEventListener('click', (e) => {
             // 編集モード切り替え
@@ -492,7 +521,17 @@ class VirtualBookshelf {
                     return false;
                 }
             }
-            
+
+            // TECHSHELFレベルフィルタ
+            if (this.activeLevelFilter !== 'all') {
+                if (book.level !== this.activeLevelFilter) return false;
+            }
+
+            // TECHSHELF言語フィルタ
+            if (this.activeLangFilter) {
+                if (!(book.lang || []).includes(this.activeLangFilter)) return false;
+            }
+
             return true;
         });
         
@@ -691,6 +730,20 @@ class VirtualBookshelf {
         return div.innerHTML;
     }
 
+    renderBookTags(book) {
+        if (!book.level && !book.lang && !book.genre) return '';
+        const levelTag = book.level
+            ? `<span class="tag tag-${this.escapeHtml(book.level)}">${this.escapeHtml(book.level)}</span>`
+            : '';
+        const langTags = (book.lang || [])
+            .map(l => `<span class="tag tag-lang">${this.escapeHtml(l)}</span>`)
+            .join('');
+        const genreTag = book.genre
+            ? `<span class="tag tag-genre">${this.escapeHtml(book.genre)}</span>`
+            : '';
+        return `<div class="book-tags">${levelTag}${langTags}${genreTag}</div>`;
+    }
+
     updateDisplay() {
         const bookshelf = document.getElementById('bookshelf');
         bookshelf.textContent = '';
@@ -787,6 +840,7 @@ class VirtualBookshelf {
                 <div class="book-info">
                     <div class="book-title">${this.escapeHtml(book.title)}</div>
                     <div class="book-author">${this.escapeHtml(book.authors)}</div>
+                    ${this.renderBookTags(book)}
                     <div class="book-links">
                         <a href="${bookUrl}" target="_blank" rel="noopener noreferrer" class="book-link store-link">${bookLinkLabel}</a>
                         <a href="#" class="book-link detail-link" data-book-id="${book.bookId}">詳細</a>
@@ -809,6 +863,7 @@ class VirtualBookshelf {
                 <div class="book-info">
                     <div class="book-title">${book.title}</div>
                     <div class="book-author">${book.authors}</div>
+                    ${this.renderBookTags(book)}
                     <div class="book-links">
                         <a href="${bookUrl}" target="_blank" rel="noopener noreferrer" class="book-link store-link">${bookLinkLabel}</a>
                         <a href="#" class="book-link detail-link" data-book-id="${book.bookId}">詳細</a>
@@ -1063,6 +1118,7 @@ class VirtualBookshelf {
                             <p style="margin: 0 0 0.5rem 0; color: #7f8c8d;"><strong>購入日:</strong> ${new Date(book.acquiredTime).toLocaleDateString('ja-JP')}</p>
                             <p style="margin: 0 0 0.5rem 0; color: #7f8c8d;"><strong>商品コード:</strong> ${book.bookId}</p>
                             ${book.updatedAsin ? `<p style="margin: 0 0 0.5rem 0; color: #7f8c8d;"><strong>変更後商品コード:</strong> ${book.updatedAsin}</p>` : ''}
+                            ${this.renderBookTags(book)}
                         </div>
                         <div class="book-edit-section" ${!isEditMode ? 'style="display: none;"' : ''}>
                             <div class="edit-field">
@@ -1086,6 +1142,37 @@ class VirtualBookshelf {
                                 <label>🔗 変更後商品コード（オプション）</label>
                                 <input type="text" class="edit-updated-asin" data-book-id="${book.bookId}" value="${book.updatedAsin || ''}" placeholder="新しい商品コードがある場合のみ入力" maxlength="10" pattern="[A-Z0-9]{10}" />
                                 <small class="field-help">※ Amazonで商品コードが変更された場合の新しいコードを入力</small>
+                            </div>
+                            <div class="edit-field">
+                                <label>📊 レベル</label>
+                                <select class="edit-level" data-book-id="${book.bookId}">
+                                    <option value="">（未設定）</option>
+                                    <option value="入門" ${book.level === '入門' ? 'selected' : ''}>入門</option>
+                                    <option value="中級" ${book.level === '中級' ? 'selected' : ''}>中級</option>
+                                    <option value="上級" ${book.level === '上級' ? 'selected' : ''}>上級</option>
+                                </select>
+                            </div>
+                            <div class="edit-field">
+                                <label>💻 言語（複数可）</label>
+                                <div class="edit-lang-checkboxes">
+                                    ${['C++', 'Python', 'Rust', 'JavaScript', 'Go', '言語非依存'].map(l =>
+                                        `<label style="display:inline-flex;align-items:center;gap:4px;margin-right:12px;margin-bottom:4px;font-weight:normal;">
+                                            <input type="checkbox" class="edit-lang-cb" data-book-id="${book.bookId}" value="${l}" ${(book.lang || []).includes(l) ? 'checked' : ''}>
+                                            ${l}
+                                        </label>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                            <div class="edit-field">
+                                <label>🏷️ ジャンル</label>
+                                <input type="text" class="edit-genre" data-book-id="${book.bookId}" value="${this.escapeHtml(book.genre || '')}" placeholder="例: ロボティクス、AI開発、アルゴリズム…" list="genre-suggestions">
+                                <datalist id="genre-suggestions">
+                                    <option value="ロボティクス">
+                                    <option value="アルゴリズム">
+                                    <option value="AI開発">
+                                    <option value="コンピュータビジョン">
+                                    <option value="言語">
+                                </datalist>
                             </div>
                             <div class="edit-actions" style="margin-top: 1rem; display: flex; gap: 0.5rem;">
                                 <button class="btn btn-small save-book-changes" data-book-id="${book.bookId}">💾 変更を保存</button>
@@ -1519,8 +1606,11 @@ class VirtualBookshelf {
 
     updateStats() {
         const totalBooks = this.books.length;
-        
+        const readBooks = this.books.filter(b => b.readStatus === 'READ').length;
+
         document.getElementById('total-books').textContent = totalBooks.toLocaleString();
+        const readEl = document.getElementById('header-read-count');
+        if (readEl) readEl.textContent = readBooks.toLocaleString();
     }
 
 
@@ -2239,12 +2329,18 @@ class VirtualBookshelf {
         const acquiredTimeInput = document.querySelector(`.edit-acquired-time[data-book-id="${asin}"]`);
         const originalAsinInput = document.querySelector(`.edit-original-asin[data-book-id="${asin}"]`);
         const updatedAsinInput = document.querySelector(`.edit-updated-asin[data-book-id="${asin}"]`);
+        const levelSelect = document.querySelector(`.edit-level[data-book-id="${asin}"]`);
+        const langCheckboxes = document.querySelectorAll(`.edit-lang-cb[data-book-id="${asin}"]`);
+        const genreInput = document.querySelector(`.edit-genre[data-book-id="${asin}"]`);
 
         const newTitle = titleInput.value.trim();
         const newAuthors = authorsInput.value.trim();
         const newAcquiredTime = acquiredTimeInput.value;
         const newOriginalAsin = originalAsinInput.value.trim();
         const newUpdatedAsin = updatedAsinInput.value.trim();
+        const newLevel = levelSelect ? levelSelect.value : undefined;
+        const newLang = langCheckboxes ? [...langCheckboxes].filter(cb => cb.checked).map(cb => cb.value) : undefined;
+        const newGenre = genreInput ? genreInput.value.trim() : undefined;
 
         if (!newTitle) {
             alert('📖 タイトルは必須です');
@@ -2275,7 +2371,10 @@ class VirtualBookshelf {
         try {
             const updateData = {
                 title: newTitle,
-                authors: newAuthors || '著者未設定'
+                authors: newAuthors || '著者未設定',
+                level: newLevel || undefined,
+                lang: newLang && newLang.length > 0 ? newLang : undefined,
+                genre: newGenre || undefined
             };
 
             // オリジナルbookIdが変更された場合

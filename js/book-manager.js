@@ -90,7 +90,11 @@ class BookManager {
             ...(book.memo && { memo: book.memo }),
             ...(book.rating && { rating: book.rating }),
             ...(book.updatedBookId && { updatedBookId: book.updatedBookId }),
-            ...(book.updatedAsin && { updatedBookId: book.updatedAsin })  // 旧形式対応
+            ...(book.updatedAsin && { updatedBookId: book.updatedAsin }),  // 旧形式対応
+            // TECHSHELFフィールド（optional）
+            ...(book.level && { level: book.level }),
+            ...(book.lang && { lang: book.lang }),
+            ...(book.genre && { genre: book.genre })
         };
     }
 

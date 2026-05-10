@@ -2145,3 +2145,658 @@ body {
 #google-volume-id:valid:not(:placeholder-shown) {
     border-color: #28a745;
 }
+
+/* ============================================================
+   TECHSHELF — 技術書タグスタイル
+   ============================================================ */
+
+.book-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+    margin-bottom: 4px;
+}
+
+.tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .08em;
+    padding: 3px 7px;
+    border: 1px solid;
+    line-height: 1.2;
+}
+
+.tag-入門  { border-color: #4fffb0; color: #4fffb0; }
+.tag-中級  { border-color: #7c6dff; color: #7c6dff; }
+.tag-上級  { border-color: #ff4f6d; color: #ff4f6d; }
+.tag-lang  { border-color: #252535; color: #666680; }
+.tag-genre { border-color: rgba(255, 204, 68, .5); color: #ffcc44; }
+
+/* レベル・言語フィルタボタン */
+.tech-filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.tech-filter-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: #666;
+    font-family: inherit;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all .15s;
+}
+
+.tech-filter-btn:hover {
+    border-color: #7c6dff;
+    color: #7c6dff;
+}
+
+.tech-filter-btn.active-level {
+    border-color: #7c6dff;
+    color: #7c6dff;
+    background: rgba(124, 109, 255, .1);
+}
+
+.tech-filter-btn.active-lang {
+    border-color: #4fffb0;
+    color: #4fffb0;
+    background: rgba(79, 255, 176, .07);
+}
+
+/* ============================================================
+   TECHSHELF — ダークテーマ全体適用
+   ============================================================ */
+
+:root {
+    --bg:         #0a0a0f;
+    --surface:    #111118;
+    --surface2:   #1a1a24;
+    --border-ts:  #252535;
+    --accent:     #4fffb0;
+    --accent2:    #7c6dff;
+    --text-ts:    #e8e8f0;
+    --text-muted: #666680;
+    --text-dim:   #999ab0;
+    --star-ts:    #ffcc44;
+
+    /* 既存変数を上書き */
+    --bg-color:      #0a0a0f;
+    --text-color:    #e8e8f0;
+    --border-color:  #252535;
+    --shadow-color:  rgba(0, 0, 0, .4);
+    --primary-color: #1a1a24;
+    --secondary-color: #4fffb0;
+    --accent-color:  #7c6dff;
+}
+
+/* グリッドテクスチャ */
+body {
+    background: var(--bg);
+    color: var(--text-ts);
+    font-family: 'Noto Sans JP', 'Segoe UI', sans-serif;
+    font-weight: 300;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(79, 255, 176, .018) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79, 255, 176, .018) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── HEADER ── */
+.header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border-ts);
+    padding: 24px 0 20px;
+    box-shadow: none;
+    position: relative;
+    z-index: 10;
+}
+
+.header .container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.header-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.techshelf-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: .2em;
+    color: var(--accent);
+    text-shadow: 0 0 28px rgba(79, 255, 176, .4);
+    line-height: 1;
+}
+
+.techshelf-logo-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .3em;
+    color: var(--text-muted);
+}
+
+.header-stats-bar {
+    display: flex;
+    gap: 28px;
+}
+
+.header-stat-item {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .12em;
+    color: var(--text-muted);
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.header-stat-item strong {
+    font-size: 22px;
+    color: var(--accent);
+    letter-spacing: 0;
+}
+
+.header-controls {
+    gap: 12px;
+}
+
+/* 検索ボックス */
+.search-box input {
+    background: var(--surface2);
+    border: 1px solid var(--border-ts);
+    color: var(--text-ts);
+    border-radius: 0;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    padding: 8px 14px;
+    transition: border-color .2s;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: none;
+}
+
+.search-box input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ボタン共通 */
+.btn {
+    border-radius: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: .08em;
+    transition: all .15s;
+}
+
+.btn-primary {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+}
+
+.btn-primary:hover,
+.btn-primary.active {
+    background: rgba(79, 255, 176, .12);
+    box-shadow: none;
+    transform: none;
+}
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border-ts);
+    color: var(--text-muted);
+}
+
+.btn-secondary:hover {
+    border-color: var(--text-dim);
+    color: var(--text-ts);
+    background: rgba(255,255,255,.04);
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--border-ts);
+    color: var(--text-muted);
+}
+
+.btn:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+.btn.active,
+.btn-primary.active {
+    background: rgba(79, 255, 176, .12);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* セレクト */
+.bookshelf-selector,
+select {
+    background: var(--surface2);
+    border: 1px solid var(--border-ts);
+    color: var(--text-ts);
+    border-radius: 0;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-size: 13px;
+    padding: 6px 10px;
+}
+
+/* ── MAIN / サイドバー ── */
+.main {
+    position: relative;
+    z-index: 1;
+    padding: 24px 0 64px;
+}
+
+.sidebar {
+    width: 230px;
+}
+
+.filter-section,
+.stats-section {
+    background: var(--surface);
+    border: 1px solid var(--border-ts);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 20px;
+}
+
+.filter-section h3,
+.stats-section h3 {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .2em;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border-ts);
+    padding-bottom: 8px;
+    margin-bottom: 14px;
+}
+
+.filter-group label {
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .12em;
+    color: var(--text-muted);
+    font-weight: 400;
+    margin-bottom: 8px;
+}
+
+.filter-group select {
+    background: var(--surface2);
+    border-color: var(--border-ts);
+    color: var(--text-ts);
+    border-radius: 0;
+}
+
+.checkbox-label {
+    color: var(--text-dim);
+    font-size: .85rem;
+    font-weight: 300;
+}
+
+.checkbox-label:hover {
+    background: rgba(255,255,255,.03);
+}
+
+.stat-item {
+    border-bottom: 1px solid var(--border-ts);
+}
+
+.stat-value {
+    color: var(--accent);
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .1em;
+}
+
+/* ── 蔵書コンテナ ── */
+.bookshelf-container {
+    background: var(--surface);
+    border: 1px solid var(--border-ts);
+    border-radius: 0;
+    box-shadow: none;
+    padding: 24px;
+}
+
+/* ── 本カード ── */
+.book-item {
+    border: 1px solid var(--border-ts);
+    background: var(--surface);
+    border-radius: 0;
+    transition: border-color .2s, transform .2s;
+}
+
+.book-item:hover {
+    border-color: rgba(79, 255, 176, .35);
+    transform: translateY(-3px);
+}
+
+.book-cover {
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.book-cover-placeholder {
+    background: linear-gradient(135deg, var(--surface2), #1e1e2e);
+    border-radius: 0;
+    color: var(--border-ts);
+}
+
+.book-title {
+    color: var(--text-ts);
+    font-weight: 500;
+    font-size: .82rem;
+}
+
+.book-author {
+    color: var(--text-muted);
+    font-size: .75rem;
+}
+
+.book-memo {
+    background: rgba(124, 109, 255, .08);
+    border-left: 3px solid var(--accent2);
+    color: var(--text-dim);
+    border-radius: 0;
+}
+
+/* リスト表示 */
+.bookshelf.view-list .book-item {
+    background: var(--surface);
+    border-color: var(--border-ts);
+    border-radius: 0;
+}
+
+/* ── ステータスバッジ ── */
+.status-read {
+    background: rgba(79, 255, 176, .2);
+    color: var(--accent);
+}
+
+/* ── モーダル ── */
+.modal-content {
+    background: var(--surface);
+    border: 1px solid var(--border-ts);
+    border-radius: 0;
+}
+
+.modal-close {
+    color: var(--text-muted);
+}
+
+.modal-close:hover {
+    color: var(--text-ts);
+}
+
+.modal-header {
+    border-bottom: 1px solid var(--border-ts);
+}
+
+.modal-header h2 {
+    color: var(--text-ts);
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    letter-spacing: .08em;
+}
+
+.book-detail-cover-placeholder {
+    background: var(--surface2);
+    color: var(--text-muted);
+    border-radius: 0;
+}
+
+.book-notes-section h3 {
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .15em;
+}
+
+.large-textarea {
+    background: var(--surface2);
+    border-color: var(--border-ts);
+    color: var(--text-ts);
+    border-radius: 0;
+}
+
+.large-textarea:focus {
+    border-color: var(--accent);
+    box-shadow: none;
+    outline: none;
+}
+
+.note-display {
+    background: var(--surface2) !important;
+    border-left: 4px solid var(--accent2) !important;
+    color: var(--text-dim);
+    border-radius: 0 !important;
+}
+
+.note-preview {
+    background: var(--surface2);
+    border-left: 3px solid var(--accent2);
+    border-radius: 0;
+}
+
+.note-preview-content {
+    color: var(--text-dim);
+}
+
+.rating-section h4,
+.book-highlights-section h3 {
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: .15em;
+}
+
+.edit-field label {
+    color: var(--text-muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    letter-spacing: .1em;
+}
+
+.edit-field input,
+.edit-field select {
+    background: var(--surface2);
+    border-color: var(--border-ts);
+    color: var(--text-ts);
+    border-radius: 0;
+}
+
+.edit-field input:focus,
+.edit-field select:focus {
+    border-color: var(--accent);
+    box-shadow: none;
+    outline: none;
+}
+
+.book-detail-info h2 {
+    color: var(--text-ts) !important;
+}
+
+.book-detail-info p {
+    color: var(--text-dim) !important;
+}
+
+.book-actions .store-link,
+.book-actions .amazon-link {
+    border-radius: 0;
+}
+
+/* ── フッター ── */
+.footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border-ts);
+}
+
+.footer a {
+    color: var(--accent);
+}
+
+/* ── 本棚管理 ── */
+.bookshelf-item {
+    background: var(--surface2);
+    border-color: var(--border-ts);
+    border-radius: 0;
+}
+
+.bookshelf-item:hover {
+    background: var(--surface);
+    border-color: var(--border-ts);
+}
+
+.bookshelf-info h4 {
+    color: var(--text-ts);
+}
+
+.bookshelf-info p {
+    color: var(--text-muted);
+}
+
+/* ── ページネーション ── */
+.pagination button {
+    background: var(--surface);
+    border-color: var(--border-ts);
+    color: var(--text-muted);
+    border-radius: 0;
+}
+
+.pagination button:hover:not(:disabled) {
+    background: rgba(79, 255, 176, .1);
+    color: var(--accent);
+}
+
+.pagination .current-page {
+    background: rgba(79, 255, 176, .1);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+/* ── インポート・フォーム ── */
+.import-option,
+.add-option {
+    background: var(--surface2);
+    border-color: var(--border-ts);
+    border-radius: 0;
+}
+
+.import-option h3,
+.add-option h3 {
+    color: var(--text-ts);
+}
+
+.form-group label {
+    color: var(--text-muted);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    background: var(--surface2);
+    border-color: var(--border-ts);
+    color: var(--text-ts);
+    border-radius: 0;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    border-color: var(--accent);
+    box-shadow: none;
+}
+
+.import-results,
+.add-results {
+    background: var(--surface2);
+    border-color: var(--border-ts);
+    border-radius: 0;
+}
+
+.import-summary h3,
+.add-success h3 {
+    color: var(--accent);
+}
+
+.import-stats .stat-item {
+    background: var(--surface);
+    border-color: var(--border-ts);
+    border-radius: 0;
+}
+
+/* ── ソースタブ ── */
+.source-tabs {
+    border-bottom-color: var(--border-ts);
+}
+
+.source-tab {
+    color: var(--text-muted);
+    background: transparent;
+}
+
+.source-tab:hover {
+    background: rgba(79,255,176,.05);
+}
+
+.source-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+}
+
+/* ── ドラッグハンドル ── */
+.drag-handle {
+    background: rgba(0,0,0,.6);
+    color: var(--text-muted);
+}
+
+/* ── 本棚プレビュー ── */
+.bookshelf-preview {
+    background: var(--surface2);
+    border-color: var(--border-ts);
+    border-radius: 0;
+}
+
+.bookshelf-preview h3 {
+    color: var(--text-ts);
+}
+
+.bookshelf-preview p {
+    color: var(--text-muted);
+}
+
+/* ── レスポンシブ ── */
+@media (max-width: 768px) {
+    .techshelf-logo { font-size: 22px; }
+}

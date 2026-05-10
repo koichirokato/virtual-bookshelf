@@ -3,24 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Virtual Bookshelf - 読書ライブラリ</title>
-    <meta name="description" content="個人読書コレクション - お気に入りの本を美しく展示">
-    
+    <title>TECHSHELF — Technical Reading Log</title>
+    <meta name="description" content="技術書特化の読書ログ — レベル・言語・ジャンルで管理する個人蔵書">
+
     <!-- Open Graph for social sharing -->
-    <meta property="og:title" content="Virtual Bookshelf - 読書ライブラリ">
-    <meta property="og:description" content="お気に入りコレクション">
+    <meta property="og:title" content="TECHSHELF — Technical Reading Log">
+    <meta property="og:description" content="技術書特化の読書ログ">
     <meta property="og:type" content="website">
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
     <link rel="stylesheet" href="css/bookshelf.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
 
 </head>
 <body>
     <header class="header">
         <div class="container">
-            <h1 class="header-title">📚 Virtual Bookshelf</h1>
-            <p class="header-subtitle">読書ライブラリ</p>
-            
+            <div class="header-brand">
+                <div class="techshelf-logo">TECHSHELF</div>
+                <div class="techshelf-logo-sub">TECHNICAL READING LOG</div>
+            </div>
+            <div class="header-stats-bar">
+                <div class="header-stat-item">
+                    <strong id="total-books">-</strong>
+                    <span>BOOKS</span>
+                </div>
+                <div class="header-stat-item">
+                    <strong id="header-read-count">-</strong>
+                    <span>READ</span>
+                </div>
+            </div>
+
             <div class="header-controls">
                 <div class="bookshelf-controls">
                     <select id="bookshelf-selector" class="bookshelf-selector">
@@ -75,6 +88,28 @@
                                 <input type="checkbox" id="star-0" value="0" checked>
                                 ☆ 未評価
                             </label>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>レベル</label>
+                        <div class="tech-filter-group" id="level-filter-group">
+                            <button class="tech-filter-btn active-level" data-filter="level" data-value="all">ALL</button>
+                            <button class="tech-filter-btn" data-filter="level" data-value="入門">入門</button>
+                            <button class="tech-filter-btn" data-filter="level" data-value="中級">中級</button>
+                            <button class="tech-filter-btn" data-filter="level" data-value="上級">上級</button>
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>言語</label>
+                        <div class="tech-filter-group" id="lang-filter-group">
+                            <button class="tech-filter-btn" data-filter="lang" data-value="C++">C++</button>
+                            <button class="tech-filter-btn" data-filter="lang" data-value="Python">Python</button>
+                            <button class="tech-filter-btn" data-filter="lang" data-value="Rust">Rust</button>
+                            <button class="tech-filter-btn" data-filter="lang" data-value="JavaScript">JavaScript</button>
+                            <button class="tech-filter-btn" data-filter="lang" data-value="Go">Go</button>
+                            <button class="tech-filter-btn" data-filter="lang" data-value="言語非依存">言語非依存</button>
                         </div>
                     </div>
 
